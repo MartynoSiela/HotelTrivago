@@ -9,7 +9,7 @@ import java.util.UUID;
 
 public class GuestDao {
 
-    private static final String DB_URL = "jdbc:h2:~/hotel;";
+    private static final String DB_URL = "jdbc:h2:./hotel;";
 
     public GuestDao() {
         try {
