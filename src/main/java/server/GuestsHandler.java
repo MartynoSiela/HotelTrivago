@@ -44,21 +44,17 @@ public class GuestsHandler implements HttpHandler {
     }
 
     private void handlePostRequest(HttpExchange exchange) throws IOException {
-        URI requestUri = exchange.getRequestURI();
-        String query = requestUri.getRawQuery();
+        Map<String, String> parameters = getQueryParameters(exchange.getRequestURI());
+        String name = parameters.get("name");
+        String surname = parameters.get("surname");
 
-        Map<String, String> parameters = new HashMap<>();
-        for (String parameter : query.split("&")) {
-            String[] pair = parameter.split("=");
-            if (pair.length > 1) {
-                parameters.put(pair[0], pair[1]);
-            } else {
-                parameters.put(pair[0], "");
-            }
+        if (name == null || name.isEmpty() || surname == null || surname.isEmpty()) {
+            sendResponse(exchange, 400, "Both 'name' and 'surname' are required");
+        } else {
+            Guest guest = new Guest(UUID.randomUUID(), name, surname);
+            Guest createdGuest = guestService.createGuest(guest);
+            sendResponse(exchange, 201, createdGuest.toString());
         }
-        Guest guest = new Guest(UUID.randomUUID(), parameters.get("name"), parameters.get("surname"));
-        Guest createdGuest = guestService.createGuest(guest);
-        sendResponse(exchange, 201, createdGuest.toString());
     }
 
     private void handleGetRequest(HttpExchange exchange) throws IOException {
@@ -71,5 +67,21 @@ public class GuestsHandler implements HttpHandler {
         try (OutputStream os = exchange.getResponseBody()) {
             os.write(response.getBytes());
         }
+    }
+
+    private Map<String, String> getQueryParameters(URI requestUri) {
+        String query = requestUri.getRawQuery();
+        Map<String, String> parameters = new HashMap<>();
+        if (query != null) {
+            for (String parameter : query.split("&")) {
+                String[] pair = parameter.split("=");
+                if (pair.length > 1) {
+                    parameters.put(pair[0], pair[1]);
+                } else {
+                    parameters.put(pair[0], "");
+                }
+            }
+        }
+        return parameters;
     }
 }
