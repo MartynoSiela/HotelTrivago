@@ -3,7 +3,8 @@ package service;
 import dao.GuestDao;
 import model.Guest;
 
-import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 public class GuestService {
 
@@ -13,11 +14,14 @@ public class GuestService {
         guestDao = new GuestDao();
     }
 
-    public Guest createGuest(Guest guest) {
-        return guestDao.insert(guest);
-    }
+    public Guest createGuest(String name, String surname) {
+        Optional<Guest> existingGuest = findGuestByNameAndSurname(name, surname);
 
-    public List<Guest> getAllGuests() {
-        return guestDao.getAllGuests();
-    }
+        if (existingGuest.isPresent()) {
+            return existingGuest.get();
+        }
+
+        return guestDao.insert(new Guest(UUID.randomUUID(), name, surname)); }
+
+    public Optional<Guest> findGuestByNameAndSurname(String name, String surname) { return guestDao.get(name, surname); }
 }

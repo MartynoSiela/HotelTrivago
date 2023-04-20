@@ -3,13 +3,10 @@ package dao;
 import model.Guest;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public class GuestDao {
-
-    private static final String DB_URL = "jdbc:h2:./hotel;";
 
     public GuestDao() {
         try {
@@ -19,31 +16,10 @@ public class GuestDao {
         }
     }
 
-    public List<Guest> getAllGuests() {
-        List<Guest> guests = new ArrayList<>();
-        String sql = "SELECT * FROM GUESTS";
-
-        try (Connection connection = DriverManager.getConnection(DB_URL, "admin", "password");
-             Statement statement = connection.createStatement()) {
-
-            ResultSet rs = statement.executeQuery(sql);
-            while (rs.next()) {
-                String id = rs.getString(1);
-                String name = rs.getString(2);
-                String surname = rs.getString(3);
-                guests.add(new Guest(UUID.fromString(id), name, surname));
-            }
-        }  catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return guests;
-    }
-
     public Guest insert(Guest guest) {
         String sql = "INSERT INTO GUESTS (id, name, surname) VALUES (?, ?, ?)";
 
-        try (Connection connection = DriverManager.getConnection(DB_URL, "admin", "password");
+        try (Connection connection = DatabaseConfig.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
             statement.setString(1, guest.getId().toString());
@@ -55,5 +31,29 @@ public class GuestDao {
         }
 
         return guest;
+    }
+
+    public Optional<Guest> get(String name, String surname) {
+        String sql = "SELECT * FROM GUESTS WHERE name = ? AND surname = ?";
+
+        try (Connection connection = DatabaseConfig.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
+            statement.setString(1, name);
+            statement.setString(2, surname);
+            statement.executeQuery();
+
+            try (ResultSet rs = statement.executeQuery()) {
+                if (rs.next()) {
+                    UUID id = UUID.fromString(rs.getString("id"));
+                    Guest guest = new Guest (id, rs.getString("name"), rs.getString("surname"));
+                    return Optional.of(guest);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return Optional.empty();
     }
 }
