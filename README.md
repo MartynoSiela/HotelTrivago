@@ -33,7 +33,7 @@ Parameters: name (string), surname (string)
 Retrieves a guest with the given name and surname.\
 Parameters: name (string), surname (string)
 #### Room Details
-`GET /rooms/{{room_id}}/details`\
+`GET /rooms/{{room_number}}/details`\
 Retrieves the details of a specific room by its ID.\
 Path variable: room_id (string)
 ### Rooms Occupied
