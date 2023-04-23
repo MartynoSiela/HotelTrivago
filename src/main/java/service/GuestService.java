@@ -10,18 +10,18 @@ public class GuestService {
 
     private GuestDao guestDao;
 
-    public GuestService() {
-        guestDao = new GuestDao();
+    public GuestService(GuestDao guestDao) {
+        this.guestDao = guestDao;
     }
 
-    public Guest createGuest(String name, String surname) {
+    public Guest createOrReturnExistingGuest(String name, String surname) {
         Optional<Guest> existingGuest = findGuestByNameAndSurname(name, surname);
 
         if (existingGuest.isPresent()) {
             return existingGuest.get();
         }
 
-        return guestDao.insert(new Guest(UUID.randomUUID(), name, surname)); }
+        return guestDao.createGuest(new Guest(UUID.randomUUID(), name, surname)); }
 
     public Optional<Guest> findGuestByNameAndSurname(String name, String surname) { return guestDao.get(name, surname); }
 }

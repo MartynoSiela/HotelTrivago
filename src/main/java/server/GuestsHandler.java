@@ -4,6 +4,7 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import model.Guest;
 import service.GuestService;
+import service.ServiceManager;
 
 import java.io.IOException;
 import java.util.*;
@@ -12,7 +13,7 @@ public class GuestsHandler implements HttpHandler {
     private GuestService guestService;
 
     public GuestsHandler() {
-        guestService = new GuestService();
+        guestService = ServiceManager.getInstance().getGuestService();
     }
 
     @Override
@@ -40,7 +41,7 @@ public class GuestsHandler implements HttpHandler {
         if (name == null || name.isEmpty() || surname == null || surname.isEmpty()) {
             HttpUtils.sendResponse(exchange, 400, "Both 'name' and 'surname' are required");
         } else {
-            Guest createdGuest = guestService.createGuest(name, surname);
+            Guest createdGuest = guestService.createOrReturnExistingGuest(name, surname);
             HttpUtils.sendResponse(exchange, 201, createdGuest.toString());
         }
     }

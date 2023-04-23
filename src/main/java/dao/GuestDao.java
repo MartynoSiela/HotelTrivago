@@ -16,7 +16,7 @@ public class GuestDao {
         }
     }
 
-    public Guest insert(Guest guest) {
+    public Guest createGuest(Guest guest) {
         String sql = "INSERT INTO GUESTS (id, name, surname) VALUES (?, ?, ?)";
 
         try (Connection connection = DatabaseConfig.getConnection();
@@ -41,7 +41,6 @@ public class GuestDao {
 
             statement.setString(1, name);
             statement.setString(2, surname);
-            statement.executeQuery();
 
             try (ResultSet rs = statement.executeQuery()) {
                 if (rs.next()) {
