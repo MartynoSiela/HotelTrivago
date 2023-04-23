@@ -31,10 +31,6 @@ public class Guest {
         return surname;
     }
 
-//    public String toString() {
-//        return id + " " + name + " " + surname;
-//    }
-
     @Override
     public String toString() {
         String result = "{";
