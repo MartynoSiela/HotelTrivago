@@ -11,10 +11,9 @@ This is a homework project of a hotel guest registration program. The requiremen
   - Room availability. Occupied rooms are listed with the guest name and surname
   - Room history and status. Each of the guest name and surname is listed together with the room status (available or occupied)
 
-I've chosen to implement a Web API to communicate with the program. Because of the requirement to not use Spring Boot, I've chosen to use HttpServer as the starting point for the application.
+I've chosen to implement a Web API to communicate with the program. Data is stored in H2 database as it is easy to use for a Java project. Because of the requirement to not use Spring Boot, I've chosen to use HttpServer as the starting point for the application.
 ## Setup
-
-
+To run the program, the `main` method from `HotelHttpServer` class in `server` package has to be run. This starts the program and makes `http://localhost:8000/` available as the starting point for the endpoints that are provided below.
 ## Endpoints
 For the program I've decided to create these endpoints:
 ### Create Reservation
@@ -43,4 +42,3 @@ Retrieves a list of all occupied rooms.
 ### Rooms Available
 `GET /rooms/available`\
 Retrieves a list of all available rooms.
-
